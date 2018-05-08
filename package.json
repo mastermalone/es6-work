@@ -33,14 +33,14 @@
     "vhost": "^3.0.1"
   },
   "dependencies": {
+    "bootstrap": "^4.1.1",
     "connect-route": "^0.1.5",
     "connect-router": "0.0.2",
     "connect_router": "^1.8.7",
     "eventemitter2": "~1.0.0",
     "peaks.js": "^0.9.4",
     "shelljs": "^0.7.0",
-    "systemjs": "^0.21.1",
-    "approutes": "file:custom_modules/routes/routes"
+    "systemjs": "^0.21.1"
   },
   "bugs": {
     "url": "https://github.com/mastermalone/es6-work/issues"

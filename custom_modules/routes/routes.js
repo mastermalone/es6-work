@@ -4,7 +4,7 @@ module.exports = (function appRoutes() {
   let AppRoutes = {
       init: function appRoutesInit(app) {
         let options = {
-            root: __dirname + '/../',
+            root: __dirname + '/../../',
             dotfiles: 'deny',
             headers: {
               'x-timestamp': Date.now(),
@@ -13,7 +13,7 @@ module.exports = (function appRoutes() {
         }
         
         app.get('/', function getHomePage(req, res, next) {
-          res.sendFile('./index.html', options, function getHomePage(err) {
+    	  res.sendFile('index.html', options, function getHomePage(err) {
             if(err) {
               next(err);
             }else {
@@ -21,13 +21,10 @@ module.exports = (function appRoutes() {
             }
           });
         });
-        //app.get('/mike', function mikeroute(req, res, next) {
+        
         app.get('/:name', function getRoute(req, res, next) {
-          
-          let filePathName = req.params.name+'/';
-          
-          //res.sendFile('index.html', options, function getHtmlFile(err) {
-          res.sendFile(filePathName + 'index.html', options, function getHtmlFile(err) {
+          let filePathName = req.params.name;
+          res.sendFile(filePathName + '/index.html', options, function getHtmlFile(err) {
             if(err) {
               next(err);
             }else {

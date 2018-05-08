@@ -1,4 +1,4 @@
-module.exports.approutes = (function appRoutes() {
+module.exports = (function appRoutes() {
   'use strict';
   
   let AppRoutes = {
@@ -21,17 +21,15 @@ module.exports.approutes = (function appRoutes() {
             }
           });
         });
-        //app.get('/mike', function mikeroute(req, res, next) {
+        
         app.get('/:name', function getRoute(req, res, next) {
           
           let filePathName = req.params.name;
-          
-          //res.sendFile('index.html', options, function getHtmlFile(err) {
-          res.sendFile(filePathName + 'index.html', options, function getHtmlFile(err) {
+          res.sendFile(filePathName + '/index.html', options, function getHtmlFile(err) {
             if(err) {
               next(err);
             }else {
-              console.log('Sent', 'index');
+              console.log('Sent', filePathName + '/index.html');
             }
           });
         });

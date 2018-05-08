@@ -15,9 +15,6 @@
   "devDependencies": {
     "connect": "^3.4.0",
     "serve-static": "^1.10.0",
-    "vhost": "^3.0.1",
-     "dependencies": {
-      "approutes": "file:dev-server/routes"
-     }
+    "vhost": "^3.0.1"
   }
 }
