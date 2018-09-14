@@ -6,9 +6,7 @@ module.exports.server = (function () {
           var https = require('https');
           var fs = require('fs');
           var proxied = require('https-proxied');
-          var connectRouter = require('connect-route');
-          //console.log('THE ROUTER', connectRouter);
-          
+          var connectRouter = require('connect-route');          
           var portX = port || 3000;
           var domainX = domain || 'localhost';
           var connect = require('connect');

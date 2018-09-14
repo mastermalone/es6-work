@@ -1,8 +1,6 @@
-import {FetchImpl} from 'index-impl';
+import {FetchImpl} from './index-impl.js';
 
-export const Fetch = ((FetchImpl) => {
-  'use strict';
-  console.log('THE FETCH OBJECT');
-  
-  return FetchImpl;
-}());
+export const Fetch =  {
+    get: FetchImpl.get,
+    post: FetchImpl.post
+  }

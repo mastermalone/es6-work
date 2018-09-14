@@ -15,11 +15,14 @@ module.exports.server = (function expressServer() {
         let serve = svStatic('./');
         let liverelaod = require('livereload');
         let appRoutes = require('../custom_modules/routes/routes');
+        let products = require('../api-routes/products');
         let app = express();
         appRoutes.init(app, appRoot);
+        app.use(express.static(path.join((__dirname, './')))); //This is so that you can load javascript and CSS files
+        app.use('/products', products.init());
         
         app.listen(portX);
-        console.log("Server is listening on port:", port);
+        console.log("Server is listening on port:", portX);
       }
   }
   return Server;

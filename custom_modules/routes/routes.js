@@ -1,8 +1,8 @@
 module.exports = (function appRoutes() {
   'use strict';
-  
   let AppRoutes = {
       init: function appRoutesInit(app) {
+        const fs = require('fs');
         let options = {
             root: __dirname + '/../../',
             dotfiles: 'deny',
@@ -13,7 +13,16 @@ module.exports = (function appRoutes() {
         }
         
         app.get('/', function getHomePage(req, res, next) {
-    	  res.sendFile('index.html', options, function getHomePage(err) {
+          res.sendFile('index.html', options, function getHomePage(err) {
+            if(err) {
+              next(err);
+            }else {
+              console.log('Sent', 'Home Page index.html')
+            }
+          });
+        });
+        app.get('/mike', function getHomePage(req, res, next) {
+    	  res.sendFile('/mike/index.html', options, function getHomePage(err) {
             if(err) {
               next(err);
             }else {
@@ -22,16 +31,20 @@ module.exports = (function appRoutes() {
           });
         });
         
-        app.get('/:name', function getRoute(req, res, next) {
-          let filePathName = req.params.name;
-          res.sendFile(filePathName + '/index.html', options, function getHtmlFile(err) {
-            if(err) {
-              next(err);
-            }else {
-              console.log('Sent', 'index');
-            }
-          });
-        });
+        //Breaks the endpoint get requests.  I can use this if I create a seperate server for the endpoints
+        /*app.get('/:name', function getRoute(req, res, next) {
+          if (fs.existsSync(req.params.name + '/index.html')) {
+            res.sendFile(req.params.name + '/index.html', options, function getHtmlFile(err) {
+              if(err) {
+                next(err);
+              }else {
+                console.log('Sent', 'index');
+              }
+            });
+          }else {
+            return;
+          }
+        });*/
       }
   }
   
