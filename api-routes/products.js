@@ -24,13 +24,13 @@ module.exports = {
       
       router.patch('/:id', (req, res, next) => {
         res.status(200).json({
-          message: 'You updated the product! Updated item:'+req.params.id
+          message: 'You updated the product! Updated item: '+req.params.id
         });
       });
       
       router.delete('/:id', (req, res, next) => {
         res.status(200).json({
-          message: 'You deleted the product! Deleted item:'+req.params.id
+          message: 'You deleted the product! Deleted item: '+req.params.id
         });
       });
       
@@ -48,14 +48,14 @@ module.exports = {
         product.save()
         .then((result) => {
           console.log('You just saved', result);
+          //Make sure to return the product object in the response
+          res.status(201).json({
+            message: 'Handling POST product requests',
+            created_product: product
+          });
         })
         .catch(error => console.log('A Save Error ocurred:', error));
         
-        //Make sure to return the product object in the response
-        res.status(201).json({
-          message: 'Handling POST product requests',
-          created_product: product
-        });
       });
       return router;
     }
