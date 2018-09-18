@@ -1,4 +1,4 @@
-//This is the data modle for the expected structure for products
+//This is the data model for the expected structure for products
 const mongoose = require('mongoose');
 const productSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,

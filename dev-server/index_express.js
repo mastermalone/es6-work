@@ -30,13 +30,13 @@ module.exports.server = (function expressServer() {
         });
         
         /*
-         * For logging purposes to show you waht action took place on your endpoint, use morgan.  It shows up in the
+         * For logging purposes to show you what action took place on your end-point, use morgan.  It shows up in the
          * the terminal where the server is running
          */
         app.use(morgan('dev'));
         
         /*
-         * Body parser is used to parse the mostly unreadable data from incoming requests to my endpoints.
+         * Body parser is used to parse the mostly unreadable data from incoming requests to my end-points.
          * We can use that data by converting it to JSON format or URL encoded
          * We can now use the body parser in our routes
          */
@@ -45,10 +45,10 @@ module.exports.server = (function expressServer() {
         
         /*
          * CORS HEADERS (Cross Origin Resource Sharing)
-         * I need to give access to this endpoint to external clients that may not be on the 
-         * same server as my endpoints.  The header needs  key 'Access-Control-Allow-Origin" and a value '*",
+         * I need to give access to this end-point to external clients that may not be on the 
+         * same server as my end-points.  The header needs  key 'Access-Control-Allow-Origin" and a value '*",
          * You can restrict it to something like, 'Access-Control-Allow-Origin" and a value 'http://mysite-only.com",
-         * but that goes agains the RESTful API conventions since RESTful API's are generally open to all
+         * but that goes against the RESTful API conventions since RESTful API's are generally open to all
          * All this is done to ensure that we prevent CORS Errors.
          */
         app.use((req, res, next) => {
@@ -56,12 +56,12 @@ module.exports.server = (function expressServer() {
           res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
           
           /*
-           * If the request meath matches the supplied header options
+           * If the request matches the supplied header options
            */
           if (req.method === 'OPTIONS') {
-            //Create another header to indicate which HTTP methods you are going to allow for your endpoints
+            //Create another header to indicate which HTTP methods you are going to allow for your end-points
             res.header('Access-Control-Alow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-            //Return an empty json object because this request does not need to go to the routes below
+            //Return an empty JSON object because this request does not need to go to the routes below
             return res.status(200).json({});
           }
           //You must call next() so that the other routes below can take over the execution from this point on. Your request will stall otherwise
