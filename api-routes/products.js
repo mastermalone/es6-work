@@ -5,6 +5,7 @@ module.exports = {
       const Product= require('./models/products');
       const mongoose = require('mongoose');
       
+      
       router.get('/:id', (req, res, next) => {
         const id = req.params.id;
         
@@ -13,7 +14,17 @@ module.exports = {
         .then(doc => {
           console.log('Here is the product', doc);
           if (doc) {
-            res.status(200).json(doc);
+            const response = {
+                product: {
+                  name: doc.name,
+                  price: doc.price,
+                  request: {
+                    type: 'GET',
+                    description: 'Get all products via: '+req.get('host')+'/products/'
+                  }
+                }
+            }
+            res.status(200).json(response);
           }else {
             res.status(404).json({
               error: 'The ID does not exist'
@@ -31,10 +42,27 @@ module.exports = {
       
       router.get('/', (req, res) => {
         Product.find()
+        .select('name price _id') //Filter the data that you want to return in the response.  This is optional but works well
         .exec()
         .then(doc => {
           if (doc.length >= 0) {
-            res.status(200).json(doc);
+            //You can taylor the response to look however you wish as seen below with the 'response' object.  
+            //Always be descriptive on the data you return from your API's so that others who use it know how to ise it
+            const response = {
+                count: doc.length,
+                products: doc.map((prod, idx, array) => {
+                  return {
+                    _id: prod._id,
+                    name: prod.name,
+                    price: prod.price,
+                    request: {
+                      type: 'GET',
+                      url: req.get('host')+'/products/'+prod._id //This is a good way to send a response to make it easier for the API consumer to use your API
+                    }
+                  }
+                })
+            }
+            res.status(200).json(response);
           }else {
             res.status(200).json({
               _id: 0,
@@ -44,8 +72,8 @@ module.exports = {
           }
           
         })
-        .catch(error => {
-          res.status(500).json({error: error});
+        .catch(err => {
+          res.status(500).json({error: err});
         });
       });
       
@@ -58,7 +86,7 @@ module.exports = {
         /*
          * Example req body array to pass
          * [
-         *    { "propname": "name", "value": "The new Value" } 
+         *    { "propName": "name", "value": "The new Value" } 
          * ]
          */
         for (const prop of req.body) {
@@ -80,15 +108,39 @@ module.exports = {
       
       router.delete('/:id', (req, res, next) => {
         const id = req.params.id;
-        Product.remove({_id: id})
+        
+        Product.find({"_id": id})
+        .select('_id')
         .exec()
         .then(result => {
-          console.log("Req paramns type", typeof id);
-          res.status(200).json(result)
+          console.log('THE RESULT', result);
+          const deletedProduct = {
+              product: result
+          }
+          
+          if (result.length > 0) {
+            Product.deleteOne({_id: id})
+            .exec()
+            .then(result => {
+              console.log('deleted product:', deletedProduct);
+              
+              res.status(200).json(result);
+            })
+            .catch(error => {
+              res.status(500).json({
+                error: error
+              });
+            });
+            res.status(200).json(deletedProduct);
+          }else {
+            res.status(404).json({
+              error: 'The ID:'+id+' could not be found'
+            })
+          }
         })
-        .catch(error => {
+        .catch(err => {
           res.status(500).json({
-            error: error
+            erro: err
           });
         });
       });
@@ -117,7 +169,14 @@ module.exports = {
           //Make sure to return the product object in the response
           res.status(201).json({
             message: 'Handling POST product requests',
-            created_product: product
+            created_product: {
+              name: result.name,
+              price: result.price,
+              request: {
+                type: 'POST',
+                url: req.get('host')+'/products/'+result._id//This information is more useful to the front end and can be used more efficiently
+              }
+            }
           });
         })
         .catch(error => {
