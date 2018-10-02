@@ -2,23 +2,53 @@ module.exports = {
     init: () => {
       const express = require('express');
       const router = express.Router();
+      const mongoose = require('mongoose');
+      const Order = require('./models/orders');
       
       router.get('/', (req, res) => {
-        res.status(200).json({
-          messgage: 'Orders were fetched'
+        Order.find()
+        .select('product quantity _id')
+        .exec()
+        .then(docs => {
+          res.status(200).json({
+            count: docs.length,
+            orders: docs.map(doc =>{
+              return {
+                _id: doc._id,
+                product: doc.product,
+                quantity: doc.quantity,
+                request: {
+                  type: 'GET',
+                  url: req.get('host')+'/orders/'+doc._id
+                }
+              }
+            })
+          });
+          //res.status(201).json(orders);
+        })
+        .catch(err => {
+          res.statis(500).json({
+            error: err
+          });
         });
       });
       
       //Status code 201 means the creation of the data was successful
       router.post('/', (req, res) => {
-        const order = {
-            product_id: req.body.productId,
-            quantity: req.body.quantity
-        };
-        //Make sure to return the order object in the response
-        res.status(201).json({
-          messgage: 'Order was created',
-          order: order
+        const order = new Order({
+            _id: mongoose.Types.ObjectId(),
+            quantity: req.body.quantity,
+            product: req.body.productId
+        });
+      
+        order.save()
+        .then( result => {
+          res.status(201).json(result);
+        })
+        .catch(err => {
+          res.status(500).json({
+            error: err
+          });
         });
       });
       
