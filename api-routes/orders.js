@@ -4,6 +4,7 @@ module.exports = {
       const router = express.Router();
       const mongoose = require('mongoose');
       const Order = require('./models/orders');
+      const Product = require('./models/products');
       
       router.get('/', (req, res) => {
         Order.find()
@@ -24,7 +25,6 @@ module.exports = {
               }
             })
           });
-          //res.status(201).json(orders);
         })
         .catch(err => {
           res.statis(500).json({
@@ -35,35 +35,99 @@ module.exports = {
       
       //Status code 201 means the creation of the data was successful
       router.post('/', (req, res) => {
-        const order = new Order({
+        //Check if product exists before creating a new order
+        Product.findById(req.body.productId)
+        .then(prod => {
+          if (!prod) {
+            return res.status(404).json({
+              message: 'Product not found'
+            });
+          }
+          const order = new Order({
             _id: mongoose.Types.ObjectId(),
             quantity: req.body.quantity,
             product: req.body.productId
-        });
-      
-        order.save()
+          });
+          
+          return order.save();
+        })
         .then( result => {
-          res.status(201).json(result);
+          res.status(201).json({
+            message:'Order for '+ result.product + ' stored.',
+            created_order: {
+              _id: result._id,
+              product: result.product,
+              quantity: req.body.quantity
+            },
+            request: {
+              type: 'POST',
+              url: req.get('host')+'/orders/'+result._id
+            }
+          });
         })
         .catch(err => {
           res.status(500).json({
+            message: 'This product does not exist',
+            error: err
+          });
+        })  
+      });
+      
+      router.get('/:id', (req, res) => {
+        Order.findById(req.params.id)
+        .exec()
+        .then(ord => {
+          if (!ord) {
+            return res.status(404).json({
+              message: 'Order not found'
+            })
+          }
+          res.status(200).json({
+            message: 'Order found for'+ord.id,
+            order: ord,
+            request: {
+              type: 'GET',
+              url: req.get('host')+'/orders/'
+            }
+          });
+        })
+        .catch(err => {
+          res.status(500).json({
+            message: 'No order found',
             error: err
           });
         });
       });
       
-      router.get('/:id', (req, res) => {
-        res.status(200).json({
-          messgage: 'Here is the order for: '+req.params.id,
-          order_id: req.params.id
-        });
-      });
-      
       router.delete('/:id', (req, res) => {
-        res.status(200).json({
-          messgage: 'The order was deleted: '+req.params.id,
-          order_id: req.params.id
-        });
+        Order.findById({_id: req.params.id}).
+        then(ord => {
+          if (!ord) {
+            return res.status(404).json({
+              message: 'Order for ID: '+req.params.id+ ' could not be found'
+            });
+          }
+          Order.remove({_id: req.params.id})
+          .then(result => {
+            res.status(200).json({
+              message: 'Order Deleted',
+              request: {
+                type: 'POST',
+                url: req.get('host')+'/orders/',
+                body: {
+                  product_id: req.params.is,
+                  quantity: result.quantity
+                }
+              }
+            });
+          });
+        })
+        .catch(err=> {
+          res.status(500).json({
+            message: 'Could not Delete order with ID:'+ req.params.id,
+            error: err
+          })
+        })
       });
       
       return router;
