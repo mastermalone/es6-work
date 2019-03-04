@@ -1,11 +1,11 @@
-export const app = (appIife () => {
-  'use strict';
-  
+export const app = (function appIife() {
+  "use strict";
+
   const bootstrap = () => {
-    console.log('Boot strapping the app');
-  }
-  
+    console.log("Boot strapping the app");
+  };
+
   return {
     bootstrap: bootstrap
   };
-}());
+})();
